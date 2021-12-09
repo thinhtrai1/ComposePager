@@ -1,6 +1,6 @@
 package com.example.jetpackcompose.main
 
-import android.view.MotionEvent
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -17,9 +17,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -27,21 +27,21 @@ import androidx.compose.ui.util.lerp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.google.accompanist.pager.*
-import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @ExperimentalComposeUiApi
 @ExperimentalUnitApi
 @ExperimentalPagerApi
 @Composable
+@Preview
 fun PagerView() {
     val features = listOf(
         Feature(listOf("Home", "Notification", "Information", "Setting")),
         Feature(listOf("News", "Blog", "Movie", "Photo", "Music")),
         Feature(listOf("Community", "Favourite", "Gatherings", "Happy")),
     )
-    val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(5)
+//    val coroutineScope = rememberCoroutineScope()
+//    val pagerState = rememberPagerState(1000)
 
     fun PagerScope.graphics(page: Int) = Modifier
         .graphicsLayer {
@@ -50,7 +50,7 @@ fun PagerView() {
                 start = 0.85f,
                 stop = 1f,
                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
-            ).also { scale ->
+            ).let { scale ->
                 scaleX = scale
                 scaleY = scale
             }
@@ -59,27 +59,25 @@ fun PagerView() {
                 stop = 1f,
                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
             )
-        }
-        .pointerInteropFilter {
-            when (it.action) {
-                MotionEvent.ACTION_DOWN -> {}
-                MotionEvent.ACTION_UP -> {}
-            }
-            return@pointerInteropFilter false
+            Log.e("pageOffset", "pageOffset: $pageOffset")
+//            if (pageOffset == 0f) {
+//                scaleX = 1f
+//                scaleY = 1f
+//            }
         }
         .fillMaxSize()
 
     HorizontalPager(
-        count = 10,
+        count = Int.MAX_VALUE,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 32.dp),
-        state = pagerState
+        state = PagerState(1000)
     ) { page ->
         VerticalPager(
-            count = 100,
+            count = Int.MAX_VALUE,
             modifier = graphics(page),
             contentPadding = PaddingValues(vertical = 64.dp),
-            state = PagerState(50)
+            state = PagerState(1000)
         ) { page2 ->
             Card(
                 modifier = graphics(page2),

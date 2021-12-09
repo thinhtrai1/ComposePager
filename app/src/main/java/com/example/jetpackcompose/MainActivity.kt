@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.core.os.postDelayed
+import com.example.jetpackcompose.main.InformationView
 import com.example.jetpackcompose.main.PagerView
 import com.google.accompanist.pager.ExperimentalPagerApi
 
@@ -30,6 +32,7 @@ class SplashActivity : ComponentActivity() {
 }
 
 class MainActivity : ComponentActivity() {
+    @ExperimentalMaterialApi
     @ExperimentalComposeUiApi
     @ExperimentalUnitApi
     @ExperimentalPagerApi
@@ -37,6 +40,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PagerView()
+        }
+    }
+}
+
+class InformationActivity: ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            InformationView()
         }
     }
 }

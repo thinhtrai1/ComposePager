@@ -1,16 +1,17 @@
 package com.example.jetpackcompose.main
 
+import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
@@ -25,10 +27,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.os.postDelayed
 import coil.compose.rememberImagePainter
+import com.example.jetpackcompose.InformationActivity
 import com.google.accompanist.pager.*
 import kotlin.math.absoluteValue
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @ExperimentalUnitApi
 @ExperimentalPagerApi
@@ -42,6 +49,7 @@ fun PagerView() {
     )
 //    val coroutineScope = rememberCoroutineScope()
 //    val pagerState = rememberPagerState(1000)
+    val context = LocalContext.current
 
     fun PagerScope.graphics(page: Int) = Modifier
         .graphicsLayer {
@@ -82,7 +90,8 @@ fun PagerView() {
             Card(
                 modifier = graphics(page2),
                 shape = RoundedCornerShape(16.dp),
-//                onClick = {
+                onClick = {
+                    context.startActivity(Intent(context, InformationActivity::class.java))
 //                    coroutineScope.launch {
 //                        if (page < 9) {
 //                            pagerState.animateScrollToPage(page = page + 1)
@@ -96,7 +105,7 @@ fun PagerView() {
 //                            }
 //                        }
 //                    }
-//                }
+                }
             ) {
                 Box {
                     val seed = rangeForRandom.random()
@@ -141,6 +150,41 @@ fun PagerView() {
 }
 
 class Feature(val list: List<String>)
+
+@Composable
+private fun DummyProgress(dialogState: Boolean, onDismiss: () -> Unit) {
+    if (dialogState) {
+        Dialog(
+            onDismissRequest = onDismiss,
+            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(Color.White, shape = CircleShape)
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+    }
+}
+
+@Composable
+fun InformationView() {
+    var dialogState by remember { mutableStateOf(false) }
+    DummyProgress(dialogState = dialogState) { dialogState = false }
+    Button(
+        onClick = {
+            dialogState = true
+            Handler(Looper.getMainLooper()).postDelayed(500) {
+                dialogState = false
+            }
+        }
+    ) {
+        Text(text = "Hello world")
+    }
+}
 
 @Composable
 private fun ProfilePicture(seed: Int, modifier: Modifier = Modifier) {
